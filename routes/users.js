@@ -10,14 +10,23 @@ router.get('/', function(req, res, next) {
 });
 
 router.post('/login', async (req, res) => {
-  let authenticated = await authenticate({
-    ldapOpts: { url: 'ldap://10.26.10.200' },
-    userDn: 'uid=gauss,dc=example,dc=com',
-    userPassword: `${req.body.password}`,
-    userSearchBase: 'dc=example,dc=com',
-    usernameAttribute: 'uid',
-    username: `${req.body.username}`,
-  })
+
+  let authenticated;
+  try {
+    authenticated = await authenticate({
+      ldapOpts: { url: 'ldap://ldap.apelma.de' },
+      adminDn: `uid=root,cn=users,dc=ldap,dc=apelma,dc=de`,
+      adminPassword: 'kS6nXV5z4x7nemV',
+      userPassword: req.body.password,
+      userSearchBase: 'dc=ldap,dc=apelma,dc=de',
+      usernameAttribute: 'uid',
+      username: req.body.username,
+      starttls: false
+    })
+  } catch(err) {
+    console.error(err.name, err);
+  }
+  
   if (authenticated){
     res.status(200).json({ token: jwt.sign({user: 'admin'}, 's3tk3nd'), expiresIn: '100000', authUserState: {user: 'admin'} })
   } else {

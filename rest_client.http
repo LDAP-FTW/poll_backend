@@ -1,0 +1,7 @@
+POST http://localhost:5000/u/login
+Content-Type: application/json
+
+{
+    "username": "ldapuser",
+    "password": "kS6nXV5z4x7nemV"
+}
