@@ -11,12 +11,12 @@ router.get('/', function(req, res, next) {
 
 router.post('/login', async (req, res) => {
   let authenticated = await authenticate({
-    ldapOpts: { url: 'ldap://ldap.forumsys.com' },
+    ldapOpts: { url: 'ldap://10.26.10.200' },
     userDn: 'uid=gauss,dc=example,dc=com',
-    userPassword: 'password',
+    userPassword: `${req.body.password}`,
     userSearchBase: 'dc=example,dc=com',
     usernameAttribute: 'uid',
-    username: 'gauss',
+    username: `${req.body.username}`,
   })
   if (authenticated){
     res.status(200).json({ token: jwt.sign({user: 'admin'}, 's3tk3nd'), expiresIn: '100000', authUserState: {user: 'admin'} })
