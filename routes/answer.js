@@ -21,7 +21,7 @@ router.post("/", async (req, res) => {
 })
 
 router.delete("/:answer", (req, res) => {
-    db.query(`answer/${req.params.answer}`).remove().then(ref => res.send(`${ref.key} got removed`));
+    db.ref(`answer/${req.params.answer}`).remove().then(ref => res.send(`${ref.key} got removed`));
 })
 
 module.exports = router;
