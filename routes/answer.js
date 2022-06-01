@@ -16,8 +16,11 @@ router.post("/", async (req, res) => {
     if (await query.exists()) {
         await query.remove()
     }
+    // Calculate date in two weeks
+    const date = new Date()
+    date.setDate(date.getDate() + 14)
     // upload the new answer
-    db.ref(`answer`).push(req.body).then(ref => res.send(ref.key));
+    db.ref(`answer`).push({...req.body, "expiration": date.toString()}).then(ref => res.send(ref.key));
 })
 
 router.delete("/:answer", (req, res) => {
