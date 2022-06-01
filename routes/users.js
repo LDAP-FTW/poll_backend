@@ -20,13 +20,12 @@ router.post('/login', async (req, res) => {
     let authenticated = false;
     try {
       authenticated = await authenticate({
-        ldapOpts: { url: 'ldap://ldap.apelma.de' },
-        adminDn: `uid=root,cn=users,dc=ldap,dc=apelma,dc=de`,
-        adminPassword: 'kS6nXV5z4x7nemV',
+        ldapOpts: { url: 'ldap://10.26.10.200' },
+        userDn: `uid=${username},cn=users,dc=ldap,dc=fbs,dc=de`,
         userPassword: password,
-        userSearchBase: 'dc=ldap,dc=apelma,dc=de',
+        username,
+        userSearchBase: 'dc=ldap,dc=fbs,dc=de',
         usernameAttribute: 'uid',
-        username: username,
         starttls: false
       });
     } catch(err) {
@@ -58,7 +57,9 @@ router.post('/login', async (req, res) => {
   res.status(200).json({
     token: jwt.sign(userVal, 's3tk3nd'),
     expiresIn: '100000',
-    authUserState: {user: userVal}
+    authUserState: {
+      user: userVal
+    }
   });
 });
 
