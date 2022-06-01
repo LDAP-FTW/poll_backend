@@ -62,4 +62,12 @@ router.post('/login', async (req, res) => {
   });
 });
 
+router.post('/register', async (req, res) => {
+  db.ref('user').push({
+    username: req.body.username,
+    password: await bcrypt.hash(req.body.password, 13),
+    email: req.body.email
+  }).then(ref => res.send(ref.key));  
+})
+
 module.exports = router;
