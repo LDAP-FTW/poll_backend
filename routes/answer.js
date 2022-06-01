@@ -17,10 +17,13 @@ router.post("/", async (req, res) => {
         await query.remove()
     }
     // Calculate date in two weeks
-    const date = new Date()
-    date.setDate(date.getDate() + 14)
-    // upload the new answer
-    db.ref(`answer`).push({...req.body, "expiration": date.toString()}).then(ref => res.send(ref.key));
+    db.ref(`poll/${req.body.poll}`).get().then(snap => {
+        var expirationDate = snap.val().expiration
+        var date = new Date(expirationDate)
+        date.setDate(date.getDate() + 14)
+        // upload the new answer
+        db.ref(`answer`).push({...req.body, "expiration": date.toString()}).then(ref => res.send(ref.key));
+    })
 })
 
 router.delete("/:answer", (req, res) => {
