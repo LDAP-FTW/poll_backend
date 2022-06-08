@@ -37,17 +37,18 @@ router.post('/login', async (req, res) => {
       user = await db.ref('user').push({
         username,
         password: await bcrypt.hash(password, 13),
-        email: authenticated.mail
+        email: authenticated.mail,
+        admin: true
       });
     } else {
       res.status(400).send('Wrong username or password');
       return;
     }
   }
-
+  
   // Melde den User an
-  const userData = (await user.get())[0];
-  const userVal = userData.val();
+  var userData = await user.get();
+  const userVal = userData[0].val();
 
   if(!await bcrypt.compare(password, userVal.password)) {
     res.status(400).send('Wrong username or password');
@@ -67,8 +68,13 @@ router.post('/register', async (req, res) => {
   db.ref('user').push({
     username: req.body.username,
     password: await bcrypt.hash(req.body.password, 13),
-    email: req.body.email
-  }).then(ref => res.send(ref.key));  
+    email: req.body.email,
+    admin: false
+  }).then(ref => res.status(200).send(ref.key));  
+})
+
+router.delete('/', (req, res) => {
+  db.ref('user').remove().then(() => res.send("Deleted successfully"))
 })
 
 module.exports = router;

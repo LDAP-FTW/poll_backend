@@ -2,8 +2,26 @@ var express = require('express');
 var router = express.Router();
 var db = require('../db');
 
-router.get("/", (req, res) => {
-    db.ref('poll').get().then(snapshot => res.send(snapshot.val()))
+router.get("/expired", (req, res) => {
+    db.query('poll').get(snapArr => {
+        var polls = {};
+        snapArr.map(snap => {
+            if(new Date(snap.val().expiration) < new Date())
+            polls[snap.key] = snap.val()
+        })
+        res.send(polls)
+    });
+})
+
+router.get("/active", (req, res) => {
+    db.query('poll').get(snapArr => {
+        var polls = {};
+        snapArr.map(snap => {
+            if(new Date(snap.val().expiration) >= new Date())
+            polls[snap.key] = snap.val()
+        })
+        res.send(polls)
+    });
 })
 
 router.get("/:key", (req, res) => {
